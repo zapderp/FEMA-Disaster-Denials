@@ -10,10 +10,16 @@ disasterDenials = read.csv("DeclarationDenials.csv")
 summary(disasterSummary)
 colSums(is.na(disasterSummary))
 colSums(disasterSummary == "")
+summaryVars = dim(disasterSummary)
 # Again no meaningful missing values
 summary(disasterDenials)
 colSums(is.na(disasterDenials))
 colSums(disasterDenials == "")
+denialVars = dim(disasterDenials)
+
+# Add predictor class to dataframes
+disasterDenials$Denied = 1
+disasterSummary$Denied = 0
 
 # Remove/update fields (Still to do, need to add Predictor variable to each df)
 # Need to remove disasters that show up in both databases (same incidentID) as 
@@ -23,7 +29,6 @@ denialsNoDate = disasterDenials[, !grepl("Date",names(disasterDenials))]
 summaryNoDate = disasterSummary[, !grepl("Date",names(disasterSummary))]
 
 # Replace denials state field with abbreviation to match summary
-denialsNoDate$state = NULL
 denialsNoDate$state = denialsNoDate$stateAbbreviation
 denialsNoDate$stateAbbreviation = NULL
 
@@ -42,6 +47,8 @@ summaryNoDate$fipsStateCode = NULL # Already have state field
 summaryNoDate$placeCode = NULL # Another version of the county code
 summaryNoDate$lastRefresh = NULL
 summaryNoDate$hash = NULL
+summaryNoDate$designatedIncidentTypes = NULL # Info not found in denials csv. Contains more specific identifiers for a disaster
+summaryNoDate$designatedArea = NULL # Info not found in denials csv, denotes county
 
 # Summary declarationType:
 # DR = Major Disaster
@@ -51,6 +58,10 @@ summaryNoDate$hash = NULL
 replacements = c("Major Disaster" = "DR", "Fire Management" = "FM", "Emergency" = "EM")
 denialsNoDate$declarationType = str_replace_all(denialsNoDate$declarationRequestType,replacements)
 denialsNoDate$declarationRequestType = NULL
+
+# Rename requestedIncidentTypes to match summary csv
+denialsNoDate$incidentType = denialsNoDate$requestedIncidentTypes
+denialsNoDate$requestedIncidentTypes = NULL
 
 # Rename program fields to match
 summaryNoDate = summaryNoDate %>% rename_with(~str_replace(.,'Declared', ''))
@@ -62,4 +73,4 @@ summaryNoDateNoPartial = summaryNoDate[!(summaryNoDate$incidentId %in% denialsNo
 
 # Need to combine as the declarationRequestNumber for denials doesn't appear in
 # the summary
-combined = bind_rows(disasterSummary,disasterDenials)
+combined = bind_rows(summaryNoDateNoPartial,denialsNoDateNoPartial)
