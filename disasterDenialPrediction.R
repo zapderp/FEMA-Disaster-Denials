@@ -74,3 +74,8 @@ summaryNoDateNoPartial = summaryNoDate[!(summaryNoDate$incidentId %in% denialsNo
 # Need to combine as the declarationRequestNumber for denials doesn't appear in
 # the summary
 combined = bind_rows(summaryNoDateNoPartial,denialsNoDateNoPartial)
+summary(combined)
+
+# Will need to do resampling techniques due to the denied predictor class being 
+# the minority. Can either use upsampling on the denials df or downsample the
+# summary df
