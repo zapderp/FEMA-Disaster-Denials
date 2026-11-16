@@ -1,5 +1,6 @@
 library(dplyr)
 library(stringr)
+library(ggplot2)
 
 # https://www.fema.gov/openfema-data-page/disaster-declarations-summaries-v2
 disasterSummary = read.csv("DisasterDeclarationsSummaries.csv")
@@ -79,3 +80,29 @@ summary(combined)
 # Will need to do resampling techniques due to the denied predictor class being 
 # the minority. Can either use upsampling on the denials df or downsample the
 # summary df
+
+# Need to remove duplicates as the original disaster summary countains counties
+# and different counties got different aid packages
+# Apparently have multi-state incidents in the csv, along with states declaring 
+# multiple emergencies. Will need to group by incidentId, state and type.
+# Actually indian reservations will also request aid too and not always follow
+# the same incidentType
+combined_squashed = combined %>% group_by(incidentId, state, declarationType, incidentType) %>%
+  summarise(
+    state = unique(state),
+    declarationType = unique(declarationType),
+    incidentType = unique(incidentType),
+    ihProgram = max(ihProgram),
+    iaProgram = max(iaProgram),
+    paProgram = max(paProgram),
+    hmProgram = max(hmProgram),
+    tribalRequest = max(tribalRequest),
+    incidentId = unique(incidentId),
+    region = unique(region),
+    Denied = unique(Denied)
+  )
+
+summary(combined_squashed)
+
+# See some instances where no program was requested (all zeros) and subsequently
+# the request was denied
