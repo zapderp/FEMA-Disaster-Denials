@@ -115,6 +115,19 @@ summary(combined_squashed)
 
 # See some instances where no program was requested (all zeros) and subsequently
 # the request was denied
+deniedCountByState = table(combined_squashed$Denied,combined_squashed$state)
+denied = as.data.frame(deniedCountByState[1,])
+accepted = as.data.frame(deniedCountByState[2,])
+
+ggplot(denied,aes(x=rownames(denied),y=`deniedCountByState[1, ]`)) + geom_point() +
+  labs(title = "Denial Count By State") + xlab("State") + ylab("Count")
+
+ggplot(accepted,aes(x=rownames(accepted),y=`deniedCountByState[2, ]`)) + geom_point() +
+  labs(title = "Accepted Count By State") + xlab("State") + ylab("Count")
+
+# Denial Count
+ggplot(combined_squashed,aes(x=Denied)) + geom_histogram(stat = "count") + 
+  labs(title = "Denial Count") + xlab("Denied") + ylab("Count")
 
 # Disaster count by state
 ggplot(combined_squashed,aes(x=state)) + geom_histogram(stat = "count") + 
@@ -134,5 +147,5 @@ ggplot(combined_squashed,aes(x=incidentType)) + geom_histogram(stat = "count") +
 
 # To Do
 # Split data into test and training
-# Standardize the training set so no data leakage
+# Standardize the training set after so no data leakage
 # Upsample the training set due to minority positive predictor
