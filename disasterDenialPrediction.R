@@ -38,6 +38,9 @@ disasterSummary$Denied = 0
 denialsNoDate = disasterDenials[, !grepl("Date",names(disasterDenials))]
 summaryNoDate = disasterSummary[, !grepl("Date",names(disasterSummary))]
 
+# Should we convert the date into just a year and add as a variable?
+# Prob should do some correlation plots
+
 # Replace denials state field with abbreviation to match summary
 denialsNoDate$state = denialsNoDate$stateAbbreviation
 denialsNoDate$stateAbbreviation = NULL
