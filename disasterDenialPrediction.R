@@ -8,6 +8,15 @@ disasterSummary = read.csv("DisasterDeclarationsSummaries.csv")
 disasterDenials = read.csv("DeclarationDenials.csv")
 
 # Don't see any meaningful missing values but see 59 different states?
+# AS (American Samoa)
+# GU (Guam)
+# MP (Northern Marina Islands)
+# PR (Puerto Rico)
+# VI (US Virgin Islands)
+# DC (District of Columbia)
+# FM (Federated states of Micronesia)
+# MH (Marshall Islands)
+# PW (Palau)
 summary(disasterSummary)
 colSums(is.na(disasterSummary))
 colSums(disasterSummary == "")
@@ -106,3 +115,24 @@ summary(combined_squashed)
 
 # See some instances where no program was requested (all zeros) and subsequently
 # the request was denied
+
+# Disaster count by state
+ggplot(combined_squashed,aes(x=state)) + geom_histogram(stat = "count") + 
+  labs(title = "Count of Disaster Submissions by State") + xlab("State") + ylab("Count") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Count of disaster declaration type
+ggplot(combined_squashed,aes(x=declarationType)) + geom_histogram(stat = "count") + 
+  labs(title = "Count of Disaster Declaration Type") + xlab("Declaration Type") + ylab("Count")
+
+# Count of disaster incident type
+ggplot(combined_squashed,aes(x=incidentType)) + geom_histogram(stat = "count") + 
+  labs(title = "Count of Disaster Incident Type") + xlab("Incident Type") + ylab("Count") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Have a lot more of some disaster/incident types than others. Will def have to standardize the values
+
+# To Do
+# Split data into test and training
+# Standardize the training set so no data leakage
+# Upsample the training set due to minority positive predictor
